@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Highway Rush - Ultimate 2D Arcade Racing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-app">
+    <!-- Ambient Background Lighting Canvas / Effects -->
+    <div class="screen-flash" id="screen-flash"></div>
+    <div class="vignette-damage" id="vignette-damage"></div>
+
+    <!-- AUDIO TOGGLE (Global Floating) -->
+    <button id="btn-sound-toggle" class="icon-btn sound-btn" title="Toggle Sound (M)" aria-label="Toggle Sound">
+      <svg id="icon-sound-on" viewBox="0 0 24 24" class="icon">
+        <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+      <svg id="icon-sound-off" viewBox="0 0 24 24" class="icon hidden">
+        <path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27l4.73 4.73H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+      </svg>
+      <span class="btn-text">SOUND: ON</span>
+    </button>
+
+    <!-- ======================================================== -->
+    <!-- 1. HOMEPAGE / TITLE SCREEN                               -->
+    <!-- ======================================================== -->
+    <section id="screen-home" class="screen active">
+      <div class="hero-backdrop">
+        <div class="grid-ground"></div>
+        <div class="sun-glow"></div>
+        <div class="speed-streaks"></div>
+        <div class="animated-highway-bg">
+          <div class="bg-lane-line line-1"></div>
+          <div class="bg-lane-line line-2"></div>
+        </div>
+      </div>
+
+      <div class="home-content">
+        <div class="title-container">
+          <div class="badge-tag">NEXT-GEN ARCADE MOTORSPORT</div>
+          <h1 class="game-logo">HIGHWAY<span class="highlight">RUSH</span></h1>
+          <p class="tagline">Outrun traffic. Dodge crossers. Survive the ultimate speed rush.</p>
+        </div>
+
+        <div class="showcase-car-preview">
+          <div class="preview-light-beam"></div>
+          <div class="preview-svg-wrapper" id="home-car-hero">
+            <!-- Dynamic SVG injected via JS -->
+          </div>
+          <div class="ground-shadow"></div>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-home-play" class="btn btn-primary btn-pulse">
+            <span class="btn-shine"></span>
+            <span class="btn-inner">PLAY NOW</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button id="btn-home-how" class="btn btn-secondary">
+            <span>INSTRUCTIONS</span>
+          </button>
+        </div>
+
+        <div class="quick-stats-bar">
+          <div class="stat-pill">
+            <span class="label">HIGH SCORE:</span>
+            <span class="value" id="home-best-score">0 PTS</span>
+          </div>
+          <div class="stat-pill">
+            <span class="label">RECORD DISTANCE:</span>
+            <span class="value" id="home-best-distance">0.0 KM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions Modal Dialog -->
+      <div id="modal-instructions" class="modal-backdrop hidden">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2>HIGHWAY MANUAL & RULES</h2>
+            <button id="btn-close-modal" class="close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="instruction-grid">
+              <div class="instruction-box">
+                <div class="inst-icon">🕹️</div>
+                <h3>CONTROLS</h3>
+                <p><strong>Left / Right (A / D):</strong> Switch lanes smoothly</p>
+                <p><strong>Up (W):</strong> Accelerate & Nitro boost</p>
+                <p><strong>Down (S):</strong> Brake & Avoid collision</p>
+                <p><strong>P or Esc:</strong> Pause game</p>
+                <p><strong>Touch Controls:</strong> On-screen pads for mobile</p>
+              </div>
+              <div class="instruction-box">
+                <div class="inst-icon">🚗</div>
+                <h3>TRAFFIC & AI</h3>
+                <p>Navigate through 3 lanes with Sedans, Taxis, Heavy Buses, Semi-Trucks, and Police units.</p>
+                <p>Vehicle Impact: <strong>-25 HP</strong></p>
+                <p>Near Miss: <strong>+150 Bonus Points</strong></p>
+              </div>
+              <div class="instruction-box">
+                <div class="inst-icon">⚠️</div>
+                <h3>HAZARDS & OBSTACLES</h3>
+                <p>Watch out for unexpected highway dangers:</p>
+                <ul>
+                  <li><strong>Speed Breakers:</strong> -10 HP + Speed drop</li>
+                  <li><strong>Crossing Animals:</strong> -15 HP (Random pace)</li>
+                  <li><strong>Pedestrians:</strong> -20 HP (Active crossing)</li>
+                </ul>
+              </div>
+              <div class="instruction-box">
+                <div class="inst-icon">❤️</div>
+                <h3>SURVIVAL</h3>
+                <p>Start with <strong>100 Health</strong>. Collisions trigger screen shake and brief invulnerability.</p>
+                <p>Game Over occurs when Health reaches <strong>0</strong> upon collision!</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="btn-modal-gotit" class="btn btn-primary btn-sm">READY TO RACE</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 2. CAR SELECTION SCREEN                                  -->
+    <!-- ======================================================== -->
+    <section id="screen-select" class="screen">
+      <div class="select-header">
+        <button id="btn-select-back" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          <span>MAIN MENU</span>
+        </button>
+        <div class="select-title-group">
+          <h2>CHOOSE YOUR MACHINE</h2>
+          <p>Each vehicle features distinctive handling, top speed, and impact armor</p>
+        </div>
+        <div class="ghost-spacer"></div>
+      </div>
+
+      <div class="cars-carousel-container">
+        <!-- 3 Distinct High-End Cars -->
+        <div class="car-cards-grid">
+          
+          <!-- CAR 1: RED SPORTS CAR (Inferno GT) -->
+          <div class="car-card selected" data-car="inferno">
+            <div class="card-glow"></div>
+            <div class="selected-badge">SELECTED</div>
+            <div class="car-header">
+              <span class="car-class">SUPER SPORT</span>
+              <h3 class="car-name">INFERNO GT</h3>
+            </div>
+            <div class="car-stage">
+              <div class="stage-spotlight"></div>
+              <div class="stage-canvas-wrapper" id="stage-inferno"></div>
+              <div class="stage-platform"></div>
+            </div>
+            <div class="car-specs">
+              <div class="spec-row">
+                <span class="spec-label">TOP SPEED</span>
+                <div class="spec-bar"><div class="fill" style="width: 88%;"></div></div>
+                <span class="spec-val">88%</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">HANDLING</span>
+                <div class="spec-bar"><div class="fill" style="width: 76%;"></div></div>
+                <span class="spec-val">76%</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">DURABILITY</span>
+                <div class="spec-bar"><div class="fill" style="width: 70%;"></div></div>
+                <span class="spec-val">70%</span>
+              </div>
+            </div>
+            <div class="car-perk">
+              <span class="perk-tag">PASSION & SPEED</span>
+              <p>Twin-turbocharged beast with lightning acceleration and responsive lane cuts.</p>
+            </div>
+            <button class="btn btn-select-car">SELECT CAR</button>
+          </div>
+
+          <!-- CAR 2: BLUE SUPERCAR (Apex Cyber) -->
+          <div class="car-card" data-car="apex">
+            <div class="card-glow"></div>
+            <div class="selected-badge">SELECTED</div>
+            <div class="car-header">
+              <span class="car-class">HYPER CONCEPT</span>
+              <h3 class="car-name">APEX CYBER</h3>
+            </div>
+            <div class="car-stage">
+              <div class="stage-spotlight"></div>
+              <div class="stage-canvas-wrapper" id="stage-apex"></div>
+              <div class="stage-platform"></div>
+            </div>
+            <div class="car-specs">
+              <div class="spec-row">
+                <span class="spec-label">TOP SPEED</span>
+                <div class="spec-bar"><div class="fill" style="width: 95%;"></div></div>
+                <span class="spec-val">95%</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">HANDLING</span>
+                <div class="spec-bar"><div class="fill" style="width: 92%;"></div></div>
+                <span class="spec-val">92%</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">DURABILITY</span>
+                <div class="spec-bar"><div class="fill" style="width: 58%;"></div></div>
+                <span class="spec-val">58%</span>
+              </div>
+            </div>
+            <div class="car-perk">
+              <span class="perk-tag">AERODYNAMIC AGILITY</span>
+              <p>Ultra-lightweight carbon fiber chassis offering razor-sharp steering precision.</p>
+            </div>
+            <button class="btn btn-select-car">SELECT CAR</button>
+          </div>
+
+          <!-- CAR 3: YELLOW PERFORMANCE CAR (Solar Thunder) -->
+          <div class="car-card" data-car="solar">
+            <div class="card-glow"></div>
+            <div class="selected-badge">SELECTED</div>
+            <div class="car-header">
+              <span class="car-class">MUSCLE TOURING</span>
+              <h3 class="car-name">SOLAR THUNDER</h3>
+            </div>
+            <div class="car-stage">
+              <div class="stage-spotlight"></div>
+              <div class="stage-canvas-wrapper" id="stage-solar"></div>
+              <div class="stage-platform"></div>
+            </div>
+            <div class="car-specs">
+              <div class="spec-row">
+                <span class="spec-label">TOP SPEED</span>
+                <div class="spec-bar"><div class="fill" style="width: 80%;"></div></div>
+                <span class="spec-val">80%</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">HANDLING</span>
+                <div class="spec-bar"><div class="fill" style="width: 68%;"></div></div>
+                <span class="spec-val">68%</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">DURABILITY</span>
+                <div class="spec-bar"><div class="fill" style="width: 95%;"></div></div>
+                <span class="spec-val">95%</span>
+              </div>
+            </div>
+            <div class="car-perk">
+              <span class="perk-tag">REINFORCED CHASSIS</span>
+              <p>Reinforced titanium frame and heavy torque engine built to withstand brutal impacts.</p>
+            </div>
+            <button class="btn btn-select-car">SELECT CAR</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="select-footer">
+        <div class="current-choice-info">
+          <span class="choice-label">READY WITH:</span>
+          <span class="choice-car-name" id="selected-car-label">INFERNO GT</span>
+        </div>
+        <button id="btn-start-game" class="btn btn-primary btn-launch">
+          <span class="btn-inner">START HIGHWAY RUN</span>
+          <svg class="btn-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2.44z"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 3. GAMEPLAY SCREEN (CANVAS & HUD)                         -->
+    <!-- ======================================================== -->
+    <section id="screen-game" class="screen">
+      <!-- Main Game Canvas Container -->
+      <div id="canvas-wrapper">
+        <canvas id="game-canvas"></canvas>
+      </div>
+
+      <!-- IN-GAME HUD DASHBOARD -->
+      <div id="game-hud">
+        <!-- TOP HUD: Health, Score, Distance, Speed -->
+        <div class="hud-top-bar">
+          <!-- Health Gauge -->
+          <div class="hud-panel health-panel">
+            <div class="hud-label-row">
+              <span class="hud-title">VEHICLE ARMOR</span>
+              <span class="hud-value" id="hud-hp-text">100%</span>
+            </div>
+            <div class="hud-bar-outer">
+              <div class="hud-bar-fill" id="hud-hp-bar" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Speedometer -->
+          <div class="hud-panel speed-panel">
+            <div class="speed-number" id="hud-speed-val">120</div>
+            <div class="speed-unit">KM / H</div>
+            <div class="speed-dial-bar">
+              <div class="dial-fill" id="hud-speed-bar" style="width: 40%;"></div>
+            </div>
+          </div>
+
+          <!-- Score & Multiplier -->
+          <div class="hud-panel score-panel">
+            <div class="hud-title">SCORE</div>
+            <div class="score-display" id="hud-score-val">000000</div>
+            <div class="score-sub">DISTANCE: <span id="hud-distance-val">0.00</span> KM</div>
+          </div>
+
+          <!-- In-Game Controls & Pause -->
+          <div class="hud-panel actions-panel">
+            <button id="btn-game-pause" class="icon-btn-hud" title="Pause (P)">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Popups Container (Near Miss, Hazard Warning, etc) -->
+        <div id="hud-popups" class="hud-popups-layer"></div>
+
+        <!-- Speed Effect Lines -->
+        <div class="speed-vignette" id="speed-vignette"></div>
+
+        <!-- MOBILE TOUCH CONTROLS (Displayed only on touch / small screens or when toggled) -->
+        <div id="mobile-controls" class="mobile-controls-layer">
+          <div class="touch-left-cluster">
+            <button id="touch-left" class="touch-btn" aria-label="Steer Left">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+            </button>
+            <button id="touch-right" class="touch-btn" aria-label="Steer Right">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            </button>
+          </div>
+
+          <div class="touch-right-cluster">
+            <button id="touch-brake" class="touch-btn brake-btn" aria-label="Brake">
+              <span>BRAKE</span>
+            </button>
+            <button id="touch-accel" class="touch-btn accel-btn" aria-label="Gas / Accelerate">
+              <span>GAS</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PAUSE OVERLAY MODAL                                      -->
+      <!-- ======================================================== -->
+      <div id="modal-pause" class="overlay-modal hidden">
+        <div class="overlay-card pause-card">
+          <h2 class="overlay-title">RACE PAUSED</h2>
+          <p class="pause-subtitle">Take a breath. The highway awaits your return.</p>
+          <div class="pause-stats">
+            <div>CURRENT SCORE: <strong id="pause-score">0</strong></div>
+            <div>DISTANCE: <strong id="pause-distance">0.00 km</strong></div>
+          </div>
+          <div class="overlay-actions">
+            <button id="btn-pause-resume" class="btn btn-primary">RESUME RACE</button>
+            <button id="btn-pause-restart" class="btn btn-secondary">RESTART</button>
+            <button id="btn-pause-quit" class="btn btn-ghost">QUIT TO MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- GAME OVER OVERLAY MODAL                                  -->
+      <!-- ======================================================== -->
+      <div id="modal-gameover" class="overlay-modal hidden">
+        <div class="overlay-card gameover-card">
+          <div class="gameover-header">
+            <div class="skull-badge">💥</div>
+            <h2 class="gameover-title">TOTAL WRECK</h2>
+            <p class="gameover-subtitle">VEHICLE DESTROYED ON THE HIGHWAY</p>
+          </div>
+
+          <div class="gameover-stats-grid">
+            <div class="go-stat-card highlight">
+              <span class="go-stat-label">FINAL SCORE</span>
+              <span class="go-stat-value" id="go-score">0</span>
+            </div>
+            <div class="go-stat-card">
+              <span class="go-stat-label">DISTANCE TRAVELLED</span>
+              <span class="go-stat-value" id="go-distance">0.00 KM</span>
+            </div>
+            <div class="go-stat-card">
+              <span class="go-stat-label">TOP SPEED REACHED</span>
+              <span class="go-stat-value" id="go-topspeed">0 KM/H</span>
+            </div>
+            <div class="go-stat-card">
+              <span class="go-stat-label">NEAR MISSES</span>
+              <span class="go-stat-value" id="go-nearmiss">0</span>
+            </div>
+          </div>
+
+          <div class="go-car-summary">
+            <span class="lbl">RACED IN:</span>
+            <span class="val" id="go-car-name">INFERNO GT</span>
+            <div id="go-new-record" class="record-badge hidden">🏆 NEW HIGH SCORE!</div>
+          </div>
+
+          <div class="overlay-actions">
+            <button id="btn-go-restart" class="btn btn-primary btn-pulse">
+              <span class="btn-inner">PLAY AGAIN</span>
+            </button>
+            <button id="btn-go-select" class="btn btn-secondary">CHANGE CAR</button>
+            <button id="btn-go-menu" class="btn btn-ghost">MAIN MENU</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
